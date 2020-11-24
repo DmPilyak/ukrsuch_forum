@@ -1,0 +1,114 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<context:component-scan
+		base-package="com.ukrsuch.ukrsuch.controllers" />
+	<mvc:annotation-driven />
+	<mvc:resources mapping="/resources/**"
+		location="/resources/" />
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- Database Information -->
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/forum_test_db?serverTimezone=GMT%2b8" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.ukrsuch.ukrsuch.model.UserModel</value>
+				<value>com.ukrsuch.ukrsuch.model.ArticleModel</value>
+				<value>com.ukrsuch.ukrsuch.model.ComicsArticleModel</value>
+				<value>com.ukrsuch.ukrsuch.model.UserArticleModel</value>
+				<value>com.ukrsuch.ukrsuch.model.CommentArticleModel</value>
+				<value>com.ukrsuch.ukrsuch.model.CommentComicsModel</value>
+				<value>com.ukrsuch.ukrsuch.model.ForumCommentArticleModel</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="current_session_context_class">thread</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<tx:annotation-driven
+		transaction-manager="transactionManager" proxy-target-class="true" />
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+	<!--Dao and Service beans -->
+	<bean id="userDao" class="com.ukrsuch.ukrsuch.dao.impl.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="userService"
+		class="com.ukrsuch.ukrsuch.service.impl.UserServiceImpl">
+		<property name="userDao" ref="userDao" />
+	</bean>
+	
+	<bean id="articleDao" class="com.ukrsuch.ukrsuch.dao.impl.ArticleDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="articleService"
+		class="com.ukrsuch.ukrsuch.service.impl.ArticleServiceImpl">
+		<property name="articleDao" ref="articleDao" />
+	</bean>
+	
+	<bean id="comicsDao" class="com.ukrsuch.ukrsuch.dao.impl.ComicsDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="comicsService"
+		class="com.ukrsuch.ukrsuch.service.impl.ComicsServiceImpl">
+		<property name="comicsDao" ref="comicsDao" />
+	</bean>
+	
+	<bean id="forumDao" class="com.ukrsuch.ukrsuch.dao.impl.ForumDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="forumService"
+		class="com.ukrsuch.ukrsuch.service.impl.ForumServiceImpl">
+		<property name="forumDao" ref="forumDao" />
+	</bean>
+	
+	<bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    </bean>
+
+	<context:component-scan
+		base-package="com.ukrsuch.ukrsuch" />
+
+
+	<mvc:default-servlet-handler />
+	<mvc:annotation-driven />
+
+</beans>

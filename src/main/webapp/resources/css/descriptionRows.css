@@ -1,0 +1,30 @@
+p.description {
+	overflow: hidden; 
+}
+
+p.description {
+      position: relative;
+      height: 3.6em; /* exactly three lines */
+    }
+p.description:after {
+      content: "";
+      text-align: right;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 70%;
+      height: 1.2em;
+ }
+
+@supports (-webkit-line-clamp: 2) {
+    p.description {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        max-height:3.6em; /* I needed this to get it to work */
+        height: auto;
+    }
+    p.description:after {
+        display: none;
+    }
+}
